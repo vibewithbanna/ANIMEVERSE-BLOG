@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelBlog — Stories Worth Reading</title>
+<style>
+:root {
+  --bg:#0b1020; --panel:#131b2e; --text:#f4f6ff;
+  --muted:#a5b0c7; --accent:#a78bfa; --border:#27334b;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; font-family:Arial, sans-serif; background:var(--bg);
+  color:var(--text); line-height:1.6;
+}
+header {
+  padding:20px 7%; display:flex; justify-content:space-between;
+  align-items:center; border-bottom:1px solid var(--border);
+  gap:16px; flex-wrap:wrap;
+}
+.logo { font-size:25px; font-weight:800; }
+.logo span { color:var(--accent); }
+button, input, textarea, select { font:inherit; }
+button {
+  cursor:pointer; border:0; border-radius:9px; padding:11px 16px;
+  background:var(--accent); color:#100d20; font-weight:bold;
+}
+button:hover { opacity:.88; }
+.secondary { background:#26324a; color:var(--text); }
+main { max-width:1100px; margin:auto; padding:30px 20px; }
+.hero { padding:35px 0 25px; }
+.eyebrow { color:var(--accent); font-weight:bold; }
+h1 { font-size:clamp(32px,5vw,54px); line-height:1.1; margin:12px 0; }
+.hero p, .muted { color:var(--muted); }
+.toolbar { display:flex; gap:12px; flex-wrap:wrap; margin:24px 0; }
+input, textarea, select {
+  background:#10182a; color:var(--text); border:1px solid var(--border);
+  border-radius:9px; padding:12px; width:100%;
+}
+.toolbar input { flex:1; min-width:190px; }
+.toolbar select { width:auto; min-width:145px; }
+.grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.card {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:15px; overflow:hidden; display:flex; flex-direction:column;
+}
+.cover {
+  min-height:145px; display:grid; place-items:center; font-size:48px;
+  background:linear-gradient(135deg,#30245c,#17445a);
+}
+.card-content { padding:18px; display:flex; flex-direction:column; flex:1; }
+.tag { color:var(--accent); font-size:12px; font-weight:bold; text-transform:uppercase; }
+.card h3 { margin:8px 0; font-size:21px; line-height:1.3; }
+.card p { color:var(--muted); margin:0 0 15px; }
+.card button { margin-top:auto; align-self:flex-start; }
+.date { font-size:12px; color:var(--muted); margin-bottom:12px; }
+section.panel {
+  margin-top:35px; padding:24px; border:1px solid var(--border);
+  background:var(--panel); border-radius:15px;
+}
+form { display:grid; gap:13px; }
+label { display:grid; gap:6px; color:var(--muted); }
+textarea { min-height:150px; resize:vertical; }
+.hidden { display:none !important; }
+.article { max-width:760px; margin:25px auto; }
+.article h1 { font-size:clamp(30px,5vw,46px); }
+.article-body { white-space:pre-wrap; overflow-wrap:anywhere; font-size:17px; }
+footer { text-align:center; color:var(--muted); padding:35px 15px; }
+.actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+@media(max-width:800px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:540px) {
+  .grid { grid-template-columns:1fr; }
+  header { padding:16px 5%; }
+  main { padding:20px 15px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Pixel<span>Blog.</span></div>
+  <button onclick="toggleEditor()">＋ Write a post</button>
+</header>
+
+<main>
+  <div id="home">
+    <div class="hero">
+      <div class="eyebrow">IDEAS · STORIES · DISCOVERIES</div>
+      <h1>Stories worth<br>spending time on.</h1>
+      <p>A little corner of the internet for ideas, creativity, and curiosity.</p>
+    </div>
+
+    <div class="toolbar">
+      <input id="search" placeholder="Search articles..." oninput="renderPosts()">
+      <select id="category" onchange="renderPosts()">
+        <option value="All">All categories</option>
+        <option>Technology</option>
+        <option>Anime</option>
+        <option>Gaming</option>
+        <option>Lifestyle</option>
+        <option>Personal</option>
+      </select>
+    </div>
+
+    <h2>Latest articles</h2>
+    <div id="posts" class="grid"></div>
+  </div>
+
+  <section id="editor" class="panel hidden">
+    <h2>Write a new post</h2>
+    <form id="postForm">
+      <label>Post title
+        <input id="title" maxlength="120" required placeholder="Give your article a title">
+      </label>
+      <label>Category
+        <select id="postCategory">
+          <option>Technology</option><option>Anime</option>
+          <option>Gaming</option><option>Lifestyle</option><option>Personal</option>
+        </select>
+      </label>
+      <label>Short description
+        <input id="excerpt" maxlength="220" required placeholder="What is your article about?">
+      </label>
+      <label>Cover emoji
+        <input id="emoji" maxlength="8" value="✍️" placeholder="Example: 🎮">
+      </label>
+      <label>Article content
+        <textarea id="content" required placeholder="Start writing your story..."></textarea>
+      </label>
+      <div class="actions">
+        <button type="submit">Publish post</button>
+        <button type="button" class="secondary" onclick="toggleEditor()">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="reader" class="article hidden">
+    <button class="secondary" onclick="goHome()">← Back to articles</button>
+    <div id="articleContent"></div>
+  </section>
+</main>
+
+<footer>Made with ♥ using PixelBlog · Your ideas, your space.</footer>
+
+<script>
+const STORAGE_KEY = "pixelblog_posts_v1";
+
+const starterPosts = [
+  {
+    id: 1, title: "Welcome to Your New Blog",
+    category: "Personal", emoji: "✍️",
+    excerpt: "Every great blog begins with one idea. This is yours.",
+    content: "Welcome to PixelBlog!\\n\\nUse the Write a post button to publish your first article. Share your ideas, experiences, tutorials, reviews, or stories.\\n\\nMake this space your own and keep creating.",
+    date: new Date().toISOString()
+  },
+  {
+    id: 2, title: "Why Technology Keeps Changing Our World",
+    category: "Technology", emoji: "💻",
+    excerpt: "From everyday apps to artificial intelligence, technology changes how we live.",
+    content: "Technology is more than gadgets and software. It changes how we communicate, learn, work, and create.\\n\\nThe exciting part is that anyone can start learning and building something new, one small step at a time.",
+    date: new Date().toISOString()
+  },
+  {
+    id: 3, title: "The Joy of Getting Lost in a Good Anime",
+    category: "Anime", emoji: "🌌",
+    excerpt: "Great stories, memorable characters, and worlds that stay with us.",
+    content: "Anime can take us into imaginative worlds and tell stories about friendship, courage, ambition, and growing up.\\n\\nWhether you love action, comedy, or thoughtful drama, there is always something new to discover.",
+    date: new Date().toISOString()
+  }
+];
+
+let posts = loadPosts();
+
+function loadPosts() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : starterPosts;
+  } catch {
+    return starterPosts;
+  }
+}
+
+function savePosts() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+  } catch {
+    alert("Could not save. Your browser storage may be full or disabled.");
+  }
+}
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[char]);
+}
+
+function renderPosts() {
+  const query = document.getElementById("search").value.toLowerCase().trim();
+  const category = document.getElementById("category").value;
+
+  const filtered = posts.filter(post =>
+    (category === "All" || post.category === category) &&
+    (post.title + " " + post.excerpt + " " + post.content)
+      .toLowerCase().includes(query)
+  );
+
+  const container = document.getElementById("posts");
+
+  if (!filtered.length) {
+    container.innerHTML = '<p class="muted">No articles found. Try another search.</p>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(post => `
+    <article class="card">
+      <div class="cover">${safeText(post.emoji || "📝")}</div>
+      <div class="card-content">
+        <div class="tag">${safeText(post.category)}</div>
+        <h3>${safeText(post.title)}</h3>
+        <div class="date">${new Date(post.date).toLocaleDateString()}</div>
+        <p>${safeText(post.excerpt)}</p>
+        <button onclick="openPost(${Number(post.id)})">Read article →</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function toggleEditor() {
+  document.getElementById("reader").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+  document.getElementById("editor").classList.toggle("hidden");
+  if (!document.getElementById("editor").classList.contains("hidden")) {
+    document.getElementById("title").focus();
+    document.getElementById("editor").scrollIntoView({behavior:"smooth"});
+  }
+}
+
+document.getElementById("postForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const post = {
+    id: Date.now(),
+    title: document.getElementById("title").value.trim(),
+    category: document.getElementById("postCategory").value,
+    excerpt: document.getElementById("excerpt").value.trim(),
+    emoji: document.getElementById("emoji").value.trim() || "📝",
+    content: document.getElementById("content").value.trim(),
+    date: new Date().toISOString()
+  };
+
+  if (!post.title || !post.excerpt || !post.content) return;
+
+  posts.unshift(post);
+  savePosts();
+  event.target.reset();
+  document.getElementById("emoji").value = "✍️";
+  document.getElementById("editor").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+  renderPosts();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+function openPost(id) {
+  const post = posts.find(item => item.id === id);
+  if (!post) return;
+
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("editor").classList.add("hidden");
+  document.getElementById("reader").classList.remove("hidden");
+
+  document.getElementById("articleContent").innerHTML = `
+    <div class="tag">${safeText(post.category)}</div>
+    <h1>${safeText(post.title)}</h1>
+    <p class="muted">${new Date(post.date).toLocaleDateString()}</p>
+    <div class="cover" style="border-radius:12px;margin:22px 0">${safeText(post.emoji || "📝")}</div>
+    <p><strong>${safeText(post.excerpt)}</strong></p>
+    <div class="article-body">${safeText(post.content)}</div>
+    <div class="actions">
+      <button class="secondary" onclick="exportPost(${Number(post.id)})">Download article</button>
+      <button class="secondary" onclick="deletePost(${Number(post.id)})">Delete post</button>
+    </div>
+    <p class="muted">Posts are saved only in this browser.</p>
+  `;
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function goHome() {
+  document.getElementById("reader").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+  renderPosts();
+}
+
+function deletePost(id) {
+  if (!confirm("Delete this article from this browser?")) return;
+  posts = posts.filter(post => post.id !== id);
+  savePosts();
+  goHome();
+}
+
+function exportPost(id) {
+  const post = posts.find(item => item.id === id);
+  if (!post) return;
+  const text = `${post.title}\\nCategory: ${post.category}\\n\\n${post.excerpt}\\n\\n${post.content}`;
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = post.title.replace(/[^a-z0-9_-]/gi, "_") + ".txt";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+renderPosts();
+</script>
+</body>
+</html>
